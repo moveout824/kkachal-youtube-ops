@@ -1,11 +1,160 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Kkachal YouTube Ops</title>
-<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:48px auto;padding:0 16px;line-height:1.7;color:#222}</style></head>
+<meta name="description" content="YouTube 채널 「깨찰빵」 운영자가 자기 채널의 분석과 영상 정보를 관리하기 위해 사용하는 내부 운영 도구입니다.">
+<meta name="theme-color" content="#0f0d0b">
+<meta property="og:title" content="Kkachal YouTube Ops">
+<meta property="og:description" content="깨찰빵 채널 운영을 위한 내부 도구. 소유자가 승인한 범위에서만 작동합니다.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.35' cy='.3'%3E%3Cstop offset='0' stop-color='%23f3c98b'/%3E%3Cstop offset='.6' stop-color='%23e0a458'/%3E%3Cstop offset='1' stop-color='%239c6427'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23g)'/%3E%3Cellipse cx='24' cy='22' rx='3' ry='5' fill='%23f8ead2' transform='rotate(25 24 22)'/%3E%3Cellipse cx='38' cy='34' rx='3' ry='5' fill='%23f8ead2' transform='rotate(-30 38 34)'/%3E%3Cellipse cx='26' cy='42' rx='3' ry='5' fill='%233c2c1e' transform='rotate(60 26 42)'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<h1>Kkachal YouTube Ops</h1>
-<p>YouTube 채널 「깨찰빵」 운영자가 자기 채널의 영상 정보와 분석 데이터를 조회하고, 영상 제목·설명·태그 같은 메타데이터를 관리하기 위해 사용하는 내부용 도구입니다.</p>
-<p>이 도구는 채널 소유자가 직접 승인한 범위에서만 YouTube Data API, YouTube Analytics API, YouTube Reporting API를 사용합니다. 일반 사용자를 대상으로 하는 서비스가 아닙니다.</p>
-<p>문의: <a href="mailto:bbbbaaannngggg@gmail.com">bbbbaaannngggg@gmail.com</a></p>
-<p><a href="privacy.html">개인정보처리방침</a></p>
-</body></html>
+<div class="progress" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>Kkachal Ops</a>
+  <a class="link" href="#features">기능</a>
+  <a class="link" href="#flow">작동 방식</a>
+  <a class="link" href="#principles">원칙</a>
+  <a class="link cta" href="privacy.html">개인정보처리방침</a>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <canvas id="sesame" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <span class="pill"><b>INTERNAL</b>깨찰빵 채널 전용 운영 도구</span>
+      <h1>
+        <span class="line"><span>Kkachal</span></span>
+        <span class="line"><span><em>YouTube Ops</em></span></span>
+      </h1>
+      <p class="lead">림버스 컴퍼니로 웃기는 쇼츠 채널 「깨찰빵」을 운영하는 팀이, 자기 채널의 데이터를 읽고 영상을 관리하기 위해 만든 도구입니다.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary magnetic" href="#features">어떤 도구인가요
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-ghost magnetic" href="https://www.youtube.com/channel/UCZzuD_0XrZrRcrqbLj8_m3w" target="_blank" rel="noopener">깨찰빵 채널 보기</a>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">scroll<i></i></div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>YouTube Data API</span><span>YouTube Analytics API</span><span>YouTube Reporting API</span><span>소유자 승인 기반</span><span>로컬 저장</span><span>제3자 공유 없음</span>
+      <span>YouTube Data API</span><span>YouTube Analytics API</span><span>YouTube Reporting API</span><span>소유자 승인 기반</span><span>로컬 저장</span><span>제3자 공유 없음</span>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="wrap">
+      <span class="eyebrow reveal">What it does</span>
+      <h2 class="reveal" style="--d:.08s">채널을 이해하고,<br>더 잘 운영하기 위해.</h2>
+      <p class="lead reveal" style="--d:.16s">공식 YouTube API만 사용하며, 채널 소유자가 Google 로그인 화면에서 직접 승인한 범위 안에서만 작동합니다.</p>
+      <div class="grid">
+        <article class="card reveal" style="--d:.05s">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+          <h3>성과 분석</h3>
+          <p>영상별 조회수, 시청 지속, 유입 경로, 구독 전환을 모아 어떤 영상이 왜 잘 됐는지 비교합니다.</p>
+          <span class="tag">yt-analytics.readonly</span>
+        </article>
+        <article class="card reveal" style="--d:.15s">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+          <h3>영상 정보 관리</h3>
+          <p>제목, 설명, 태그 같은 메타데이터를 한 번에 정리합니다. 변경 전 원본을 보관하고, 저장 후 다시 조회해 확인합니다.</p>
+          <span class="tag">youtube.force-ssl</span>
+        </article>
+        <article class="card reveal" style="--d:.25s">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v16"/></svg></div>
+          <h3>일별 보고서</h3>
+          <p>쇼츠 관련 영상 링크 유입처럼 화면에서 보기 어려운 지표를 일별 보고서로 쌓아 추세를 봅니다.</p>
+          <span class="tag">YouTube Reporting API</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <section class="flow" id="flow">
+    <div class="wrap flow-grid">
+      <div class="flow-sticky">
+        <span class="eyebrow">How it works</span>
+        <h2>데이터는 어디로도<br>새지 않습니다.</h2>
+        <p class="lead">승인부터 활용까지, 모든 단계가 채널 소유자의 통제 안에 있습니다.</p>
+        <div class="flow-visual" aria-hidden="true">
+          <div class="orbit">
+            <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+            <div class="core"></div>
+            <span class="node n1 on">소유자 승인</span>
+            <span class="node n2">공식 API</span>
+            <span class="node n3">로컬 저장</span>
+            <span class="node n4">운영 결정</span>
+          </div>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step active"><span class="num">01</span><h3>소유자가 직접 승인</h3><p>채널 소유자가 Google 공식 로그인 화면에서 접근 범위를 확인하고 승인합니다. 비밀번호는 누구에게도 공유되지 않습니다.</p></div>
+        <div class="step"><span class="num">02</span><h3>공식 API로만 조회</h3><p>YouTube Data · Analytics · Reporting API를 통해서만 채널 데이터를 읽습니다. 스크래핑이나 비공식 경로는 쓰지 않습니다.</p></div>
+        <div class="step"><span class="num">03</span><h3>운영자 컴퓨터에만 저장</h3><p>받은 데이터와 인증 정보는 운영자의 로컬 컴퓨터에만 보관합니다. 별도 서버나 제3자에게 보내지 않습니다.</p></div>
+        <div class="step"><span class="num">04</span><h3>더 재밌는 다음 영상으로</h3><p>분석 결과는 다음 영상의 대본, 편집, 업로드 전략을 정하는 데만 쓰입니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="wrap">
+      <span class="eyebrow reveal">By the numbers</span>
+      <div class="stat-row">
+        <div class="stat reveal"><div class="n" data-to="3">0</div><p>사용하는 공식 YouTube API</p></div>
+        <div class="stat reveal" style="--d:.1s"><div class="n" data-to="0">0</div><p>데이터를 공유하는 제3자</p></div>
+        <div class="stat reveal" style="--d:.2s"><div class="n" data-to="1000">0<small>+</small></div><p>깨찰빵을 구독해주신 분들</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRINCIPLES -->
+  <section class="principles" id="principles">
+    <div class="wrap">
+      <span class="eyebrow reveal">Principles</span>
+      <h2 class="reveal" style="--d:.08s">우리가 지키는 것</h2>
+      <div class="plist">
+        <div class="prow reveal"><span class="k">01</span><h3>최소한의 권한</h3><p>채널 운영에 필요한 범위만 요청합니다. 계정 설정, 소유권, 결제 정보에는 접근하지 않습니다.</p></div>
+        <div class="prow reveal"><span class="k">02</span><h3>광고·판매 금지</h3><p>받은 데이터를 광고에 쓰거나 판매하지 않습니다. Google API 서비스 사용자 데이터 정책을 따릅니다.</p></div>
+        <div class="prow reveal"><span class="k">03</span><h3>언제든 철회 가능</h3><p>소유자는 Google 계정 권한 페이지에서 언제든 접근을 끊을 수 있고, 요청하면 저장된 데이터를 삭제합니다.</p></div>
+        <div class="prow reveal"><span class="k">04</span><h3>사람이 최종 결정</h3><p>공개 상태 변경, 삭제처럼 되돌리기 어려운 작업은 운영자가 직접 확인한 뒤에만 실행합니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL -->
+  <section class="final">
+    <div class="wrap">
+      <div class="final-card reveal">
+        <span class="eyebrow">Transparency</span>
+        <h2>어떤 데이터를 어떻게 쓰는지<br>전부 공개합니다.</h2>
+        <p class="lead">수집 범위, 보관 방식, 권한 철회 방법을 개인정보처리방침에 정리해 두었습니다.</p>
+        <a class="btn btn-primary magnetic" href="privacy.html">개인정보처리방침 읽기
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 Kkachal YouTube Ops · 깨찰빵</span>
+    <nav>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="mailto:bbbbaaannngggg@gmail.com">문의: bbbbaaannngggg@gmail.com</a>
+    </nav>
+  </div>
+</footer>
+<script src="main.js"></script>
+</body>
+</html>
